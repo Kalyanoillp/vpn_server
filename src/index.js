@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const { exec } = require('child_process');
-
+const cors=require('cors');
  // For parsing JSON request bodies
 const app = express();
 app.use(cors()); // Enable CORS for all routes
@@ -17,21 +17,25 @@ app.use((req, res, next) => {
 // Endpoint to add a new peer
 app.post('/add-peer', (req, res) => {
     try {
-        const { publicKey, privateKey, ip } = req.body;
-
+        const { publicKey, privateKey, vpnIp } = req.body;
+const ip=vpnIp;
+console.log(req.body);
+console.log("=============================================");
         if (!publicKey || !privateKey || !ip) {
             return res.status(400).json({ error: 'publicKey, privateKey, and ip are required.' });
         }
+console.log("-------------------------------------------");
 
         // Create the peer configuration block
         const peerConfig = `
 [Peer]
 PublicKey = ${publicKey}
 AllowedIPs = ${ip}/32`;
-
+console.log(peerConfig);
         // Append the new peer to the configuration file
         fs.appendFile(configPath, peerConfig, (err) => {
             if (err) {
+console.log(err);
                 return res.status(500).json({ error: 'Failed to write to config file.' });
             }
 
